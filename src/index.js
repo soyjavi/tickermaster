@@ -47,11 +47,6 @@ const listener = server.listen(PORT, async () => {
   console.log(`☁️  API v${PKG.version} ${INSTANCE}:${listener.address().port}...`);
 
   crons.start();
-
-  // -- Build cache
-  // await cacheCurrencies();
-  // await cacheCryptos();
-  // await cacheMetals();
 });
 
 process.on('uncaughtException', () => server.close());
