@@ -4,22 +4,11 @@ import cors from 'cors';
 import express from 'express';
 import http from 'http';
 import dotenv from 'dotenv';
-// import prettyError from 'pretty-error';
-// import { cacheCryptos, cacheCurrencies, cacheMetals } from './common';
 import crons from './crons';
-
-import {
-  // cache, error,
-  props,
-  // request, response,
-} from './middlewares';
-import {
-  status,
-} from './services';
+import { status } from './services';
 import PKG from '../package.json';
 
 dotenv.config();
-// prettyError.start();
 
 const { PORT = 3000, INSTANCE } = process.env;
 const app = express();
@@ -36,7 +25,7 @@ global.connections = {};
 
 // -- Middlewares
 // app.use(request);
-// app.get('/status', props, status);
+app.get('/status', status);
 // app.use(response);
 
 // -- Global Error Handler

@@ -1,7 +1,7 @@
 {
   "name": "masterticker",
   "description": "A new expanded and private ticker running on the blockchain.",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "dependencies": {
     "archiver": "3.1.1",
     "body-parser": "1.19.0",
@@ -10,9 +10,7 @@
     "cron": "^1.7.2",
     "dotenv": "8.1.0",
     "express": "4.17.1",
-    "node-fetch": "2.6.0",
-    "on-finished": "2.3.0",
-    "pretty-error": "2.1.1"
+    "node-fetch": "2.6.0"
   },
   "devDependencies": {
     "@babel/cli": "7.5.5",

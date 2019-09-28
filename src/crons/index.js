@@ -3,7 +3,7 @@ import { CronJob } from 'cron';
 import metals from './metals';
 import cryptos from './cryptos';
 
-const DEFAULTS = { runOnInit: true, start: true, timeZone: 'Europe/London' };
+const DEFAULTS = { runOnInit: false, start: true, timeZone: 'Europe/London' };
 const crons = {};
 
 const start = () => {
