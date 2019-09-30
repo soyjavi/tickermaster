@@ -32,7 +32,7 @@ export default class JSONfile {
     const { file } = this;
 
     try {
-      fs.writeFileSync(file, JSON.stringify(data, null, 2), 'utf8');
+      fs.writeFileSync(file, JSON.stringify(data, null, 0), 'utf8');
     } catch (error) {
       throw new Error(`${file} could not be saved correctly.`);
     }
