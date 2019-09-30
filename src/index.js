@@ -5,7 +5,7 @@ import express from 'express';
 import http from 'http';
 import dotenv from 'dotenv';
 import crons from './crons';
-import { status } from './services';
+import { latest, status, timeline } from './services';
 import PKG from '../package.json';
 
 dotenv.config();
@@ -25,6 +25,10 @@ global.connections = {};
 
 // -- Middlewares
 // app.use(request);
+app.get('/:baseCurrency/:symbol/:group', timeline);
+// app.get('/:baseCurrency/:group/:value', timeline);
+app.get('/:baseCurrency/latest', latest);
+
 app.get('/status', status);
 // app.use(response);
 

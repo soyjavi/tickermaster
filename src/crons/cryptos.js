@@ -1,12 +1,10 @@
-import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
-import { Store } from '../common';
-import time from './modules/time';
+import { C } from '../common';
+import { Store, time } from '../modules';
 
-dotenv.config();
-const { BASE_CURRENCY, CRYPTOS } = process.env || {};
-const url = `https://min-api.cryptocompare.com/data/pricemulti?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`;
+const { BASE_CURRENCY, CRYPTOS, URL } = C;
+const url = `${URL.CRYPTOCOMPARE}?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`;
 
 export default async () => {
   const { now, date, hour } = time();
@@ -30,6 +28,8 @@ export default async () => {
         store.write(rates);
 
         console.log(`[🤖:cryptos] ${date}-${hour} found ${Object.keys(cryptos).length} new rates...`);
+      } else {
+
       }
     }
   } catch (error) {

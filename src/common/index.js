@@ -1,5 +1,4 @@
-import Store from './store';
+import C from './constants';
+import ERROR from './error';
 
-export {
-  Store
-};
+export { C, ERROR };
