@@ -1,4 +1,4 @@
-// import { ERROR } from '../common';yar
+// import { ERROR } from '../common';
 
 export default (req, res, next) => {
   const { routeMap: { required = [], optional = [] } } = req;
