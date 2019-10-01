@@ -1,7 +1,6 @@
 import { C, ERROR } from '../common';
-import {
-  exchange, parseCurrency, time, Store,
-} from '../modules';
+import { exchange, parseCurrency, time } from '../modules';
+import { getHistory, median } from './modules';
 
 const { BASE_CURRENCY } = C;
 const GROUPS = ['H', 'D', 'W', 'M'];
@@ -10,7 +9,7 @@ const localExchange = (rates = {}, symbol, baseCurrency) => {
   let value = rates[symbol];
 
   if (baseCurrency !== BASE_CURRENCY) {
-    const conversion = 1 / rates[baseCurrency]
+    const conversion = 1 / rates[baseCurrency];
     value = (symbol === BASE_CURRENCY) ? conversion : exchange(symbol, value, conversion);
   }
 
@@ -19,20 +18,21 @@ const localExchange = (rates = {}, symbol, baseCurrency) => {
 
 export default (req, res) => {
   const { params: { baseCurrency, symbol, group } } = req;
-  let rates = {};
+  const rates = {};
 
   // 1. Control :symbol is valid
 
   // 2. Control :group is valid
   if (!GROUPS.includes(group)) ERROR.UNKNOWN_SERVICE(res);
 
-  // 3. Determine files to check
-  const { now, date, hour } = time();
+  // 3. Cache?
 
-  // we should get last 2 files and join values
-  const store = new Store({ filename: date.substr(0, 7) });
-  let history = store.read();
+  // 4. Determine files to check
+  const { now } = time();
+  const history = getHistory(group === 'M' ? 12 : 1);
 
+  // 5. Process history
+  let fulfilled = false;
   Object.keys(history)
     .sort()
     .reverse()
@@ -41,59 +41,47 @@ export default (req, res) => {
 
       if (group === 'H') {
         Object.keys(history[date])
-        .sort()
-        .reverse()
-        .some((hour) => {
-          const value = localExchange(history[date][hour], symbol, baseCurrency);
-          rates[(new Date(year, month, day, hour)).toISOString()] = value;
-        })
-      }
-
-      else if (group === 'D') {
+          .sort()
+          .reverse()
+          .some((hour) => {
+            const value = localExchange(history[date][hour], symbol, baseCurrency);
+            rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
+            fulfilled = Object.keys(rates).length >= 24;
+            return fulfilled;
+          });
+      } else if (group === 'D') {
+        const { hour } = time();
         const value = localExchange(history[date][hour], symbol, baseCurrency);
-        rates[(new Date(year, month, day, hour)).toISOString()] = value;
-      }
-
-      else if (group === 'M') {
+        rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
+        fulfilled = Object.keys(rates).length >= 30;
+      } else if (group === 'M') {
         const values = Object.keys(history[date])
-          .map(hour => history[date][hour][symbol])
-          .filter(value => value > 0)
-          .sort((a, b) => a - b);
-
-        const half = Math.floor(values.length / 2);
-
-        let value = values.length % 2
-            ? values[half]
-            : (values[half - 1] + values[half]) / 2;
-
-
-        console.log({
-          date,
-          values,
-          half,
-          value,
-        })
-
-        // value = localExchange(value, symbol, baseCurrency);
-        rates[(new Date(year, month, day)).toISOString()] = value;
+          .map((hour) => localExchange(history[date][hour], symbol, baseCurrency));
+        rates[(new Date(year, month - 1, day)).toISOString()] = parseCurrency(median(values));
+        fulfilled = Object.keys(rates).length >= 365;
       }
 
-      const length = Object.keys(rates).length;
-      return ((group === 'H' && length > 24) || (group === 'D' && length > 31) || (group === 'M' && length > 12));
+      return fulfilled;
     });
 
-  // Fullfill empty values with previous value
+  // 6. Fullfill empty values with previous value
   let previousValue = 0;
   Object.keys(rates).forEach((value) => {
     rates[value] = rates[value] || previousValue;
-    previousValue = rates[value]
+    previousValue = rates[value];
   });
 
+  // 7. For MONTHLY group group by week
+
+
+  // 7. cache
+
+  // 8. return
   res.json({
     baseCurrency,
     symbol,
     group,
     now,
     rates,
-  })
-}
+  });
+};
