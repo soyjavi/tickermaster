@@ -1,5 +1,4 @@
-import time from './time';
-import Store from './store';
+import { time, Store } from '../../common';
 
 export default () => {
   const { date } = time();

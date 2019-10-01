@@ -1,5 +1,5 @@
 import {
-  C, ERROR, exchange, parseCurrency, time,
+  C,  cache, ERROR, exchange, parseCurrency, time,
 } from '../common';
 import { getHistory, median } from './modules';
 
@@ -18,7 +18,7 @@ const localExchange = (rates = {}, symbol, baseCurrency) => {
 };
 
 export default (req, res) => {
-  const { params: { baseCurrency, symbol, group } } = req;
+  const { originalUrl, params: { baseCurrency, symbol, group } } = req;
   const rates = {};
 
   // 1. Control :symbol is valid
@@ -26,13 +26,11 @@ export default (req, res) => {
   // 2. Control :group is valid
   if (!GROUPS.includes(group)) ERROR.UNKNOWN_SERVICE(res);
 
-  // 3. Cache?
-
-  // 4. Determine files to check
+  // 3. Determine files to check
   const { now } = time();
   const history = getHistory(group === 'M' ? 12 : 1);
 
-  // 5. Process history
+  // 4. Process history
   let fulfilled = false;
   Object.keys(history)
     .sort()
@@ -65,24 +63,23 @@ export default (req, res) => {
       return fulfilled;
     });
 
-  // 6. Fullfill empty values with previous value
+  // 5. Fullfill empty values with previous value
   let previousValue = 0;
   Object.keys(rates).forEach((value) => {
     rates[value] = rates[value] || previousValue;
     previousValue = rates[value];
   });
 
-  // 7. For MONTHLY group group by week
+  // 6. For WEEKLY & MONTHLY group
 
-
-  // 7. cache
-
-  // 8. return
-  res.json({
+  // 7. cache & response
+  const response = {
     baseCurrency,
     symbol,
     group,
     now,
     rates,
-  });
+  };
+  cache.set(originalUrl, response);
+  res.json(response);
 };

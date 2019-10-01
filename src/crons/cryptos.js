@@ -7,6 +7,8 @@ const url = `${URL.CRYPTOCOMPARE}?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`;
 
 export default async () => {
   const { now, date, hour } = time();
+  const errors = new Store({ filename: 'errors' });
+
   console.log(`[🤖:cryptos] ${date}-${hour} searching new rates ...`);
 
   try {
@@ -16,10 +18,12 @@ export default async () => {
 
       if (Object.keys(json).length > 0) {
         const cryptos = {};
-        Object.keys(json).forEach(symbol => cryptos[symbol] = json[symbol][BASE_CURRENCY]);
+        Object.keys(json).forEach((symbol) => {
+          cryptos[symbol] = json[symbol][BASE_CURRENCY];
+        });
 
         const store = new Store({ filename: date.substr(0, 7) });
-        let rates = store.read();
+        const rates = store.read();
 
         rates[date] = rates[date] ? rates[date] : {};
         rates[date][hour] = rates[date][hour] ? rates[date][hour] : {};
@@ -28,10 +32,11 @@ export default async () => {
 
         console.log(`[🤖:cryptos] ${date}-${hour} found ${Object.keys(cryptos).length} new rates...`);
       } else {
-
+        throw Error('[🤖:metals] can not get rates');
       }
     }
   } catch (error) {
     console.log('[🤖:cryptos] error:', error);
+    errors.write({ ...errors.read(), [now]: error });
   }
 };

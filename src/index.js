@@ -5,6 +5,7 @@ import express from 'express';
 import http from 'http';
 import dotenv from 'dotenv';
 import crons from './crons';
+import { cache, error } from './middlewares';
 import { latest, status, timeline } from './services';
 import PKG from '../package.json';
 
@@ -24,16 +25,12 @@ app.use(compression());
 global.connections = {};
 
 // -- Middlewares
-// app.use(request);
-app.get('/:baseCurrency/:symbol/:group', timeline);
-// app.get('/:baseCurrency/:group/:value', timeline);
-app.get('/:baseCurrency/latest', latest);
-
+app.get('/:baseCurrency/:symbol/:group', cache, timeline);
+app.get('/:baseCurrency/latest', cache, latest);
 app.get('/status', status);
-// app.use(response);
 
 // -- Global Error Handler
-// app.use(error);
+app.use(error);
 
 // -- Listen
 const listener = server.listen(PORT, async () => {
