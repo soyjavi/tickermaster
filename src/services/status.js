@@ -1,22 +1,28 @@
 import PKG from '../../package.json';
 
 import { cache, Store, time } from '../common';
-import { getLatest } from './modules';
 
 export default (req, res) => {
-  const { now } = time();
-  const { rates, date, hour } = getLatest();
+  const { now, date } = time();
   const errors = new Store({ filename: 'errors' });
+  const store = new Store({ filename: date.substr(0, 7) });
+  const rates = store.read();
+  const hours = {};
+
+  Object.keys(rates[date])
+    .sort()
+    .forEach((hour) => {
+      hours[hour] = Object.keys(rates[date][hour]).length;
+    });
 
   res.json({
     version: PKG.version,
     now,
     latest: {
       date,
-      hour,
-      values: Object.keys(rates).length,
+      ...hours,
     },
-    errors,
+    errors: errors.read(),
     cache: cache.status,
   });
 };

@@ -1,6 +1,6 @@
 import C from './constants';
 
-const { CACHE: { HALF_HOUR } } = C;
+const { CACHE } = C;
 
 class Cache {
   constructor() {
@@ -24,7 +24,7 @@ class Cache {
     return this.interval[key] ? this.store[key] : undefined;
   }
 
-  set(key, value, seconds = HALF_HOUR) {
+  set(key, value, seconds = CACHE) {
     this.store[key] = value;
     this.interval[key] = seconds;
   }

@@ -1,13 +1,11 @@
 import dotenv from 'dotenv';
 
 dotenv.config();
-const { BASE_CURRENCY, CRYPTOS } = process.env || {};
+const { BASE_CURRENCY, CACHE, CRYPTOS } = process.env || {};
 
 export default {
   BASE_CURRENCY,
-  CACHE: {
-    HALF_HOUR: 1800,
-  },
+  CACHE,
   CRYPTOS,
   URL: {
     CRYPTOCOMPARE: 'https://min-api.cryptocompare.com/data/pricemulti',
