@@ -1,5 +1,6 @@
-import { C } from '../common';
-import { exchange, getLatest, parseCurrency } from '../modules';
+import {
+  C, exchange, getLatest, parseCurrency,
+} from '../common';
 
 const { BASE_CURRENCY } = C;
 

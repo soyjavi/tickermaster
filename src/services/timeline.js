@@ -1,5 +1,6 @@
-import { C, ERROR } from '../common';
-import { exchange, parseCurrency, time } from '../modules';
+import {
+  C, ERROR, exchange, parseCurrency, time,
+} from '../common';
 import { getHistory, median } from './modules';
 
 const { BASE_CURRENCY } = C;

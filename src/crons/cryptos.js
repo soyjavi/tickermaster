@@ -1,7 +1,6 @@
 import fetch from 'node-fetch';
 
-import { C } from '../common';
-import { Store, time } from '../modules';
+import { C, Store, time } from '../common';
 
 const { BASE_CURRENCY, CRYPTOS, URL } = C;
 const url = `${URL.CRYPTOCOMPARE}?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`;
@@ -35,5 +34,4 @@ export default async () => {
   } catch (error) {
     console.log('[🤖:cryptos] error:', error);
   }
-
 };

@@ -1,15 +1,14 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
-import { C } from '../common';
-import { Store, time } from '../modules';
+import { C, Store, time } from '../common';
 
 dotenv.config();
 const { METALS_API_KEY } = process.env || {};
 const { URL } = C;
 
 export default async () => {
-  const { now, date, hour } = time();
+  const { date, hour } = time();
   console.log(`[🤖:metals] ${date}-${hour} searching new rates ...`);
 
   const keys = METALS_API_KEY.split(',');
@@ -22,7 +21,7 @@ export default async () => {
     if (response) {
       let { rates: metals = [] } = await response.json();
 
-      if (metals.length > 0) {
+      if (Object.keys(metals).length > 0) {
         Object.keys(metals).forEach(symbol => metals[symbol] = parseFloat(metals[symbol].toFixed(4)));
         const store = new Store({ filename: date.substr(0, 7) });
         let rates = store.read();
@@ -34,11 +33,10 @@ export default async () => {
 
         console.log(`[🤖:metals] ${date}-${hour} found ${Object.keys(metals).length} new rates...`);
       } else {
-
+        console.log('>>>>>>', json);
       }
     }
   } catch (error) {
     console.log('[🤖:metals] error:', error);
   }
-
 };

@@ -1,6 +1,6 @@
 import PKG from '../../package.json';
 
-import { getLatest, time } from '../modules';
+import { getLatest, time } from '../common';
 
 export default (req, res) => {
   const { now } = time();

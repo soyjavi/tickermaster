@@ -1,4 +1,4 @@
-import { time, Store } from '../../modules';
+import { time, Store } from '../../common';
 
 export default (previousMonths = 1) => {
   const { date } = time();
