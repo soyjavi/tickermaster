@@ -18,11 +18,8 @@ export default async (req, res) => {
   const api = keys[Math.floor(Math.random() * keys.length)];
   let response = await fetch(`${URL.METALS}/symbols?access_key=${api}`);
   if (response) {
-    const metals = await response.json();
-
-    Object.keys(metals).forEach((key) => {
-      symbols = { ...symbols, [key]: { name: metals[key] } };
-    });
+    const metals = await response.json() || {};
+    symbols = { ...symbols, ...metals };
   }
 
   // 3. Fetch & Merge crypto symbols
@@ -32,8 +29,8 @@ export default async (req, res) => {
     Object.keys(cryptos)
       .filter((key) => availableCryptos.includes(key))
       .forEach((key) => {
-        const { ImageUrl: image, CoinName: name } = cryptos[key];
-        symbols = { ...symbols, [key]: { image: `https://www.cryptocompare.com${image}`, name } };
+        const { CoinName: name } = cryptos[key];
+        symbols = { ...symbols, [key]: name };
       });
   }
 
