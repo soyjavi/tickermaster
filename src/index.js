@@ -6,7 +6,9 @@ import http from 'http';
 import dotenv from 'dotenv';
 import crons from './crons';
 import { cache, error } from './middlewares';
-import { latest, status, timeline } from './services';
+import {
+  latest, status, symbols, timeline,
+} from './services';
 import PKG from '../package.json';
 
 dotenv.config();
@@ -27,6 +29,7 @@ global.connections = {};
 // -- Middlewares
 app.get('/:baseCurrency/:symbol/:group', cache, timeline);
 app.get('/:baseCurrency/latest', cache, latest);
+app.get('/symbols', cache, symbols);
 app.get('/status', status);
 
 // -- Global Error Handler

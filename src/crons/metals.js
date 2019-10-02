@@ -16,8 +16,7 @@ export default async () => {
   try {
     const keys = METALS_API_KEY.split(',');
     const api = keys[Math.floor(Math.random() * keys.length)];
-    const url = `${URL.METALS}?access_key=${api}`;
-    const response = await fetch(url);
+    const response = await fetch(`${URL.METALS}/latest?access_key=${api}`);
 
     if (response) {
       const { rates: metals = [] } = await response.json();

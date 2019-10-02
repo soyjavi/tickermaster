@@ -1,5 +1,5 @@
 import {
-  C,  cache, ERROR, exchange, parseCurrency, time,
+  C, cache, ERROR, exchange, parseCurrency, time,
 } from '../common';
 import { getHistory, median } from './modules';
 

@@ -6,10 +6,10 @@ export default (req, res) => {
   const { now, date } = time();
   const errors = new Store({ filename: 'errors' });
   const store = new Store({ filename: date.substr(0, 7) });
-  const rates = store.read();
+  const rates = store.read() || {};
   const hours = {};
 
-  Object.keys(rates[date])
+  Object.keys(rates[date] || {})
     .sort()
     .forEach((hour) => {
       hours[hour] = Object.keys(rates[date][hour]).length;

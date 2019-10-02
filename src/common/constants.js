@@ -8,7 +8,7 @@ export default {
   CACHE,
   CRYPTOS,
   URL: {
-    CRYPTOCOMPARE: 'https://min-api.cryptocompare.com/data/pricemulti',
-    METALS: 'https://metals-api.com/api/latest',
+    CRYPTOCOMPARE: 'https://min-api.cryptocompare.com/data',
+    METALS: 'https://metals-api.com/api',
   },
 };

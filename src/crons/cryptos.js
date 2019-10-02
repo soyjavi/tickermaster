@@ -3,7 +3,6 @@ import fetch from 'node-fetch';
 import { C, Store, time } from '../common';
 
 const { BASE_CURRENCY, CRYPTOS, URL } = C;
-const url = `${URL.CRYPTOCOMPARE}?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`;
 
 export default async () => {
   const { now, date, hour } = time();
@@ -12,7 +11,7 @@ export default async () => {
   console.log(`[🤖:cryptos] ${date}-${hour} searching new rates ...`);
 
   try {
-    const response = await fetch(url);
+    const response = await fetch(`${URL.CRYPTOCOMPARE}/pricemulti?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`);
     if (response) {
       const json = await response.json();
 
