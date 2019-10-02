@@ -1,7 +1,7 @@
 {
   "name": "masterticker",
   "description": "A new expanded and private ticker running on the blockchain.",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "dependencies": {
     "archiver": "3.1.1",
     "body-parser": "1.19.0",

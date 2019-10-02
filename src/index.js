@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import crons from './crons';
 import { cache, error } from './middlewares';
 import {
-  latest, status, symbols, timeline,
+  backup, latest, status, symbols, timeline,
 } from './services';
 import PKG from '../package.json';
 
@@ -31,6 +31,7 @@ app.get('/:baseCurrency/:symbol/:group', cache, timeline);
 app.get('/:baseCurrency/latest', cache, latest);
 app.get('/symbols', cache, symbols);
 app.get('/status', status);
+app.get('/backup/:key', backup);
 
 // -- Global Error Handler
 app.use(error);
