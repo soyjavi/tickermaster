@@ -28,8 +28,8 @@ export default (req, res) => {
     latestRate[BASE_CURRENCY] = parseCurrency(conversion);
   }
 
-  // 4. Calculate the rate with the amount
-  const rate = latestRate[baseCurrency] * amount;
+  // 4. Calculate the value with the amount
+  const value = latestRate[baseCurrency] * amount;
 
   // 5. cache & response
   const response = {
@@ -38,7 +38,7 @@ export default (req, res) => {
     amount,
     date,
     hour,
-    rate,
+    value,
   };
 
   cache.set(originalUrl, response);

@@ -1,5 +1,5 @@
 import backup from './backup';
-import converter from './converter';
+import convert from './convert';
 import latest from './latest';
 import status from './status';
 import symbols from './symbols';
@@ -7,7 +7,7 @@ import timeline from './timeline';
 
 export {
   backup,
-  converter,
+  convert,
   latest,
   status,
   symbols,
