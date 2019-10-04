@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import crons from './crons';
 import { cache, error } from './middlewares';
 import {
-  backup, latest, status, symbols, timeline,
+  backup, convert, latest, status, symbols, timeline,
 } from './services';
 import PKG from '../package.json';
 
@@ -29,6 +29,7 @@ global.connections = {};
 // -- Middlewares
 app.get('/:baseCurrency/:symbol/:group', cache, timeline);
 app.get('/:baseCurrency/latest', cache, latest);
+app.get('/convert/:baseCurrency/:amount/:symbol', cache, convert);
 app.get('/symbols', cache, symbols);
 app.get('/status', status);
 app.get('/backup/:key', backup);
