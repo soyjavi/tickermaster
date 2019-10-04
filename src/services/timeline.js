@@ -81,7 +81,7 @@ export default (req, res) => {
   const values = Object.values(rates);
   const low = Math.min(...values);
   const high = Math.max(...values);
-  const progression = (((values[0] * 100) / [values[values.length - 1]]) - 100).toFixed(2);
+  const progression = ((values[0] * 100) / [values[values.length - 1]]) - 100;
 
   // 7. cache & response
   const response = {
