@@ -1,1 +1,1 @@
-export default (value) => parseFloat(parseFloat(value).toFixed(4));
+export default (value) => parseFloat(parseFloat(value).toFixed(8));
