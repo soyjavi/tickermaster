@@ -1,5 +1,5 @@
 import {
-  C, cache, exchange, ERROR, parseCurrency, time, Store,
+  C, cache, ERROR, parseCurrency, time, Store,
 } from '../common';
 
 const { BASE_CURRENCY, SYMBOLS } = C;
@@ -24,7 +24,7 @@ export default (req, res) => {
   // 3. If base currency is not the default one convert it
   if (symbol !== BASE_CURRENCY) {
     const conversion = 1 / latestRate[symbol];
-    latestRate[baseCurrency] = exchange(baseCurrency, latestRate[baseCurrency], conversion);
+    latestRate[baseCurrency] = parseCurrency(latestRate[baseCurrency] * conversion);
     latestRate[BASE_CURRENCY] = parseCurrency(conversion);
   }
 

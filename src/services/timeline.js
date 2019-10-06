@@ -1,24 +1,16 @@
 import {
-  C, cache, ERROR, exchange, parseCurrency, time,
+  C, cache, ERROR, parseCurrency, time,
 } from '../common';
-import { getHistory, median } from './modules';
+import {
+  calcExchange, getHistory, getWeek, median,
+} from './modules';
 
-const { BASE_CURRENCY, CRYPTOS, SYMBOLS } = C;
-const GROUPS = ['H', 'D', 'W', 'M'];
-const ASSETS = [...(CRYPTOS.split(',')), 'XAU', 'XAG'];
-
-const localExchange = (rates = {}, symbol, base) => {
-  let value = rates[symbol];
-
-  if (ASSETS.includes(symbol)) value = 1 / value;
-
-  if (base !== BASE_CURRENCY) {
-    const conversion = ASSETS.includes(base) ? rates[base] : 1 / rates[base];
-    value = (symbol === BASE_CURRENCY) ? conversion : exchange(symbol, value, conversion);
-  }
-
-  return parseCurrency(value);
-};
+const { SYMBOLS } = C;
+const HOURLY = 'H';
+const DAILY = 'D';
+const WEEKLY = 'W';
+const GROUPS = [HOURLY, DAILY, WEEKLY];
+const CURRENT_WEEK = getWeek(new Date());
 
 export default (req, res) => {
   const { originalUrl, params: { baseCurrency, symbol, group } } = req;
@@ -31,8 +23,8 @@ export default (req, res) => {
 
   // 3. Determine files to check
   const { now } = time();
-  const history = getHistory(group === 'M' ? 12 : 1);
-  const rates = {};
+  const history = getHistory(group === WEEKLY ? 12 : 1);
+  let rates = {};
 
   // 4. Process history
   let fulfilled = false;
@@ -42,26 +34,36 @@ export default (req, res) => {
     .some((date) => {
       const [year, month, day] = date.split('-');
 
-      if (group === 'H') {
+      if (group === HOURLY) {
         Object.keys(history[date])
           .sort()
           .reverse()
           .some((hour) => {
-            const value = localExchange(history[date][hour], symbol, baseCurrency);
+            const value = calcExchange(history[date][hour], symbol, baseCurrency);
             rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
             fulfilled = Object.keys(rates).length >= 32;
             return fulfilled;
           });
-      } else if (group === 'D') {
-        const { hour } = time();
-        const value = localExchange(history[date][hour], symbol, baseCurrency);
-        rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
-        fulfilled = Object.keys(rates).length >= 32;
-      } else if (group === 'M') {
-        const values = Object.keys(history[date])
-          .map((hour) => localExchange(history[date][hour], symbol, baseCurrency));
-        rates[(new Date(year, month - 1, day)).toISOString()] = parseCurrency(median(values));
-        fulfilled = Object.keys(rates).length >= 365;
+      } else if (group === DAILY || group === WEEKLY) {
+        let key;
+        let value;
+
+        if (group === DAILY && Object.keys(rates).length === 0) {
+          const { hour } = time();
+          value = calcExchange(history[date][hour], symbol, baseCurrency);
+          key = (new Date(year, month - 1, day, hour)).toISOString();
+        } else {
+          value = median(
+            Object
+              .keys(history[date])
+              .map((hour) => calcExchange(history[date][hour], symbol, baseCurrency)),
+          );
+          key = (new Date(year, month - 1, day)).toISOString();
+        }
+        rates[key] = parseCurrency(value);
+
+        const { length } = Object.keys(rates);
+        fulfilled = group === DAILY ? length >= 32 : length >= 365;
       }
 
       return fulfilled;
@@ -74,8 +76,22 @@ export default (req, res) => {
     previousValue = rates[value];
   });
 
-  // 6. For WEEKLY & MONTHLY group
+  // 6. For WEEKLY group
+  if (group === WEEKLY) {
+    const { year, month, day } = time();
+    const weeks = [];
+    Object.keys(rates).forEach((date) => {
+      const weekIndex = CURRENT_WEEK - getWeek(date);
+      weeks[weekIndex] = [...(weeks[weekIndex] || []), rates[date]];
+    });
 
+    rates = {};
+    weeks.forEach((week, index) => {
+      rates[(new Date(year, month, day - (7 * index))).toISOString()] = median(week);
+    });
+
+    console.log({ year, month, day, weeks });
+  }
 
   // 7. determine low, high & progression
   const values = Object.values(rates);
