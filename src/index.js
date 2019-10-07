@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import crons from './crons';
 import { cache, error } from './middlewares';
 import {
-  backup, convert, latest, status, symbols, timeline,
+  backup, chart, convert, latest, status, symbols, timeline,
 } from './services';
 import PKG from '../package.json';
 
@@ -26,9 +26,14 @@ app.use(compression());
 // -- Connections
 global.connections = {};
 
+// -- Statics
+app.use('/static', express.static('assets'));
+// app.use(express.static('dist'));
+
 // -- Middlewares
 app.get('/:baseCurrency/:symbol/:group', cache, timeline);
 app.get('/:baseCurrency/latest', cache, latest);
+app.get('/chart/:base/:symbol/:group', chart);
 app.get('/convert/:baseCurrency/:amount/:symbol', cache, convert);
 app.get('/symbols', cache, symbols);
 app.get('/status', status);

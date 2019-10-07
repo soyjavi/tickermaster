@@ -89,8 +89,6 @@ export default (req, res) => {
     weeks.forEach((week, index) => {
       rates[(new Date(year, month, day - (7 * index))).toISOString()] = median(week);
     });
-
-    console.log({ year, month, day, weeks });
   }
 
   // 7. determine low, high & progression
