@@ -1,8 +1,9 @@
 import {
-  C, cache, ERROR, parseCurrency, time, Store,
+  C, cache, ERROR, time, Store,
 } from '../common';
+import { calcExchange } from './modules'
 
-const { BASE_CURRENCY, SYMBOLS } = C;
+const { SYMBOLS } = C;
 
 export default (req, res) => {
   const { originalUrl, params: { amount, baseCurrency, symbol } } = req;
@@ -22,14 +23,10 @@ export default (req, res) => {
   const latestRate = rates[date][hour];
 
   // 3. If base currency is not the default one convert it
-  if (symbol !== BASE_CURRENCY) {
-    const conversion = 1 / latestRate[symbol];
-    latestRate[baseCurrency] = parseCurrency(latestRate[baseCurrency] * conversion);
-    latestRate[BASE_CURRENCY] = parseCurrency(conversion);
-  }
+  const conversion = calcExchange(latestRate, symbol, baseCurrency);
 
   // 4. Calculate the value with the amount
-  const value = latestRate[baseCurrency] * amount;
+  const value = conversion * amount;
 
   // 5. cache & response
   const response = {
