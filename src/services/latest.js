@@ -1,14 +1,15 @@
 import {
-  C, cache, parseCurrency, time, Store,
+  C, cache, ERROR, parseCurrency, time, Store,
 } from '../common';
 
-const { BASE_CURRENCY } = C;
+const { BASE_CURRENCY, SYMBOLS } = C;
 
 export default (req, res) => {
   const { originalUrl, params: { baseCurrency } } = req;
   const { date } = time();
 
   // 1. Control if it's a allowed baseCurrency (default USD)
+  if (!SYMBOLS.includes(baseCurrency)) return ERROR.NOT_FOUND(res);
 
   // 2. Get values
   const store = new Store({ filename: date.substr(0, 7) });
@@ -20,7 +21,7 @@ export default (req, res) => {
 
   rates = rates[date][hour];
 
-  // 3.
+  // 3. Convert if is not default base currency
   if (baseCurrency !== BASE_CURRENCY) {
     const conversion = 1 / rates[baseCurrency];
 
@@ -38,5 +39,5 @@ export default (req, res) => {
     rates,
   };
   cache.set(originalUrl, response);
-  res.json(response);
+  return res.json(response);
 };
