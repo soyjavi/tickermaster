@@ -1,7 +1,9 @@
 import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
-import { C, Store, time } from '../common';
+import {
+  C, cache, Store, time,
+} from '../common';
 
 dotenv.config();
 const { METALS_API_KEY } = process.env || {};
@@ -12,6 +14,7 @@ export default async () => {
   const errors = new Store({ filename: 'errors' });
 
   console.log(`[🤖:metals] ${date}-${hour} searching new rates ...`);
+  cache.wipe();
 
   try {
     const keys = METALS_API_KEY.split(',');

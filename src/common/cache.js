@@ -29,6 +29,11 @@ class Cache {
     this.interval[key] = seconds;
   }
 
+  wipe() {
+    this.store = {};
+    this.interval = {};
+  }
+
   get status() {
     return {
       keys: this.interval,

@@ -1,6 +1,8 @@
 import fetch from 'node-fetch';
 
-import { C, Store, time } from '../common';
+import {
+  C, cache, Store, time,
+} from '../common';
 
 const { BASE_CURRENCY, CRYPTOS, URL } = C;
 
@@ -9,6 +11,7 @@ export default async () => {
   const errors = new Store({ filename: 'errors' });
 
   console.log(`[🤖:cryptos] ${date}-${hour} searching new rates ...`);
+  cache.wipe();
 
   try {
     const response = await fetch(`${URL.CRYPTOCOMPARE}/pricemulti?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`);
