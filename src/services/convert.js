@@ -1,7 +1,7 @@
 import {
   C, cache, ERROR, time, Store,
 } from '../common';
-import { calcExchange } from './modules'
+import { calcExchange } from './modules';
 
 const { SYMBOLS } = C;
 
@@ -37,7 +37,7 @@ export default (req, res) => {
     hour,
     value,
   };
-
   cache.set(originalUrl, response);
-  res.json(response);
+
+  return res.json(response);
 };
