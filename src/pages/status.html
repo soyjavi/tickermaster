@@ -1,0 +1,85 @@
+<div class="wrapper">
+  <header class="row">
+    <h1>tickermaster<span>v.{{version}}</h1>
+    <span class="color-lighten">system status</span>
+  </header>
+
+  <article>
+    <section class="box">
+      <div class="header row">
+        <div class="bubble bg-color-{{color}}"></div>
+        <div>
+          <h2>All services are online.</h2>
+          <small class="color-lighten">As of {{now}}</small>
+        </div>
+      </div>
+      <div class="content">
+        <div class="item">
+          <div class="row space-between">
+            <span>currencies</span>
+            <small class="color-lighten">99.999% uptime for the last 90 days</small>
+          </div>
+          <div class="row space-between">
+            <div class="bar bg-color-green"></div>
+            <div class="bar bg-color-yellow"></div>
+            <div class="bar bg-color-red"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="row space-between">
+            <span>metals</span>
+            <small class="color-lighten">99.999% uptime for the last 90 days</small>
+          </div>
+          <div class="row space-between">
+            <div class="bar bg-color-green"></div>
+            <div class="bar bg-color-green"></div>
+            <div class="bar bg-color-green"></div>
+          </div>
+        </div>
+        <div class="item">
+          <div class="row space-between">
+            <span>cryptos</span>
+            <small class="color-lighten">99.999% uptime for the last 90 days</small>
+          </div>
+          <div class="row space-between">
+            <div class="bar bg-color-green"></div>
+            <div class="bar bg-color-green"></div>
+            <div class="bar bg-color-green"></div>
+          </div>
+        </div>
+
+      </div>
+      <div class="legend row">
+        <div class="square bg-color-green"></div>
+        <small class="color-lighten">100% uptime</small>
+        <div class="square bg-color-yellow"></div>
+        <small class="color-lighten">partial degradation</small>
+        <div class="square bg-color-red"></div>
+        <small class="color-lighten">downtime</small>
+      </div>
+    </section>
+
+    <section class="box">
+      <h3>Cache status</h3>
+      <div class="content">
+        {{cacheMarkup}}
+      </div>
+    </section>
+
+    <section class="box">
+      <h3>Errors</h3>
+      <div class="content">
+        {{json}}
+      </div>
+    </section>
+  </article>
+
+  <footer class="row space-between color-lighten">
+    <nav>
+      <a href="/legal">Legal</a>
+      <a href="/about">About</a>
+      <a href="https://twitter.com/tickermaster">@tickermaster</a>
+    </nav>
+    <strong>© Soshilabs, Inc.</strong>
+  </footer>
+</div>

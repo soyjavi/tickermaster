@@ -1,0 +1,66 @@
+.status header h1 {
+  font-weight: 700;
+  font-size: var(--font-size-L);
+  margin-right: var(--space-S);
+}
+  .status h1 > span {
+    display: inline-block;
+    position: relative;
+    background-color: var(--color);
+    border-radius: var(--border-radius);
+    color: white;
+    font-size: var(--font-size-XS);
+    padding: var(--space-XS) var(--space-S);
+    bottom: var(--space-XS);
+    margin-left: var(--space-XS);
+  }
+
+.status h2 {
+  font-size: var(--font-size-XL);
+  margin-bottom: var(--space-S);
+}
+
+.status h3 {
+  /*font-size: var(--font-size-L);*/
+  font-weight: 700;
+}
+
+.status .header {}
+
+  .status .header .bubble {
+    border-radius: 50%;
+    height: var(--unit);
+    width: var(--unit);
+    margin-right: var(--space);
+  }
+
+.status .content, .status .legend {
+  background-color: var(--bg-lighten);
+}
+
+.item + .item{ margin-top: var(--space); }
+
+.status .bar {
+  flex: 1;
+  height: var(--space);
+  margin: var(--space-S) 1px 0 1px;
+  opacity: 0.68;
+}
+  .status .bar:hover { opacity: 1; }
+
+.status .bar:first-child { margin-left: 0; }
+.status .bar:last-child { margin-right: 0; }
+
+.status .legend {
+  margin-top: calc(var(--unit) * 0.1);
+}
+  .status .legend .square {
+    border-radius: var(--border-radius);
+    height: 0.5rem;
+    opacity: 0.68;
+    width: 0.5rem;
+  }
+  .status .legend small {
+    margin-left: var(--space-S);
+    margin-right: var(--space);
+  }

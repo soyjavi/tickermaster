@@ -1,0 +1,33 @@
+:root {
+  --bg-color: #eef2f6;
+  --bg-lighten: #f6f9fc;
+  --color: #32325d;
+  --color-lighten: #8898aa;
+  --color-accent: #00f;
+  --color-accent-lighten: #555;
+  --color-green: #6CDB56;
+  --color-red: #FA6D46;
+  --color-yellow: #FFDE24;
+
+  --font: 'Kanit', sans-serif;
+  --font-content: 'Roboto', sans-serif;
+  --font-size-XL: 1.7rem;
+  --font-size-L: 1.4rem;
+  --font-size: 1.0rem;
+  --font-size-S: 0.85rem;
+  --font-size-XS: 0.75rem;
+
+  --unit: 1rem;
+  --space-L: 2.4rem;
+  --space: 1.6rem;
+  --space-S: 0.5rem;
+  --space-XS: 0.25rem;
+
+  --border-radius: 0.15rem;
+
+  --wrapper-status: 614px;
+}
+
+@import './reset.css';
+@import './pages.css';
+@import './page-status.css';
