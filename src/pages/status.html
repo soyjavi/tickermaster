@@ -9,7 +9,7 @@
       <div class="header row">
         <div class="bubble bg-color-{{color}}"></div>
         <div>
-          <h2>All services are online.</h2>
+          <h2>{{state}}</h2>
           <small class="color-lighten">As of {{now}}</small>
         </div>
       </div>
@@ -17,34 +17,28 @@
         <div class="item">
           <div class="row space-between">
             <span>currencies</span>
-            <small class="color-lighten">99.999% uptime for the last 90 days</small>
+            <small class="color-lighten">{{currenciesUptime}}% uptime for the last {{DIMENSION}} hours</small>
           </div>
           <div class="row space-between">
-            <div class="bar bg-color-green"></div>
-            <div class="bar bg-color-yellow"></div>
-            <div class="bar bg-color-red"></div>
+            {{currencies}}
           </div>
         </div>
         <div class="item">
           <div class="row space-between">
             <span>metals</span>
-            <small class="color-lighten">99.999% uptime for the last 90 days</small>
+            <small class="color-lighten">{{metalsUptime}}% uptime for the last {{DIMENSION}} hours</small>
           </div>
           <div class="row space-between">
-            <div class="bar bg-color-green"></div>
-            <div class="bar bg-color-green"></div>
-            <div class="bar bg-color-green"></div>
+            {{metals}}
           </div>
         </div>
         <div class="item">
           <div class="row space-between">
             <span>cryptos</span>
-            <small class="color-lighten">99.999% uptime for the last 90 days</small>
+            <small class="color-lighten">{{cryptosUptime}}% uptime for the last {{DIMENSION}} hours</small>
           </div>
           <div class="row space-between">
-            <div class="bar bg-color-green"></div>
-            <div class="bar bg-color-green"></div>
-            <div class="bar bg-color-green"></div>
+            {{cryptos}}
           </div>
         </div>
 
@@ -62,14 +56,14 @@
     <section class="box">
       <h3>Cache status</h3>
       <div class="content">
-        {{cacheMarkup}}
+        {{cache}}
       </div>
     </section>
 
     <section class="box">
       <h3>Errors</h3>
       <div class="content">
-        {{json}}
+        {{errors}}
       </div>
     </section>
   </article>
