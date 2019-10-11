@@ -4,7 +4,7 @@ import { C, cache, Store } from '../common';
 const { CRYPTOS, URL } = C;
 const { METALS_API_KEY } = process.env || {};
 const CACHE_1_DAY = 60 * 60 * 24;
-const availableCryptos = CRYPTOS.split(',');
+const availableCryptos = CRYPTOS;
 
 export default async (req, res) => {
   const { originalUrl } = req;

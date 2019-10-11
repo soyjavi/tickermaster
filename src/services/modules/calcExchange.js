@@ -1,7 +1,7 @@
 import { C, parseCurrency } from '../../common';
 
-const { BASE_CURRENCY, CRYPTOS } = C;
-const ASSETS = [...(CRYPTOS.split(',')), 'XAU', 'XAG'];
+const { BASE_CURRENCY, CRYPTOS, METALS } = C;
+const ASSETS = [...CRYPTOS, ...METALS];
 
 export default (rates = {}, symbol, base) => {
   let value = rates[symbol];

@@ -14,7 +14,7 @@ export default async () => {
   cache.wipe();
 
   try {
-    const response = await fetch(`${URL.CRYPTOCOMPARE}/pricemulti?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS}`);
+    const response = await fetch(`${URL.CRYPTOCOMPARE}/pricemulti?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS.join(',')}`);
     if (response) {
       const json = await response.json();
 
