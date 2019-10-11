@@ -20,6 +20,10 @@ header, footer {
   padding: var(--space) calc(var(--space) / 2);
 }
 
+.reverse {
+  flex-direction: row-reverse !important;
+}
+
 .row {
   display: flex;
   flex-direction: row;

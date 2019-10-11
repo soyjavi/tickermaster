@@ -6,7 +6,7 @@ import {
 
 import arrayToHtml from './modules/arrayToHtml';
 
-const DIMENSION = 72;
+const RESOLUTION = 72;
 const {
   CURRENCIES, CRYPTOS, METALS, URL: { SERVICE },
 } = C;
@@ -18,7 +18,7 @@ const skeleton = () => {
   } = time();
 
   const dataSource = {};
-  Array.from({ length: DIMENSION }, (value, index) => {
+  Array.from({ length: RESOLUTION }, (value, index) => {
     dataSource[(new Date(year, month, day, parseInt(hour, 10) - (index))).toISOString()] = STATE.ERROR;
   });
 
@@ -40,21 +40,39 @@ const renderService = (dataSource) => arrayToHtml(
 const renderCache = (keys) => arrayToHtml(
   Object.keys(keys)
     .filter((key) => key.substr(0, 5) !== 'page:')
-    .map((key) => render('templates/item-cache', { SERVICE, key, seconds: keys[key] })),
+    .map((key) => render('templates/item-cache', {
+      SERVICE,
+      key,
+      seconds: keys[key],
+    })),
 );
+
+const renderErrors = () => {
+  const store = new Store({ filename: 'errors' });
+  const errors = store.read();
+
+  return arrayToHtml(
+    Object.keys(errors)
+      .slice(-10)
+      .reverse()
+      .map((key) => render('templates/item-error', {
+        error: errors[key],
+        timestamp: (new Date(key)).toString().substr(0, 24),
+      })),
+  );
+};
 
 const uptime = (dataSource) => {
   const keys = Object.keys(dataSource);
   const { length } = keys.filter((key) => dataSource[key] === STATE.COMPLETE);
 
-  return ((length * 100) / DIMENSION).toFixed(2);
+  return ((length * 100) / RESOLUTION).toFixed(2);
 };
 
 const healthy = (values = {}) => !Object.keys(values).some((key) => values[key] === STATE.INCOMPLETE);
 
 export default (req, res) => {
   const { now } = time();
-  const errors = new Store({ filename: 'errors' });
   const currencies = skeleton();
   const metals = skeleton();
   const cryptos = skeleton();
@@ -79,10 +97,10 @@ export default (req, res) => {
           if (cryptos[index]) cryptos[index] = intersect(CRYPTOS, symbols) ? STATE.COMPLETE : STATE.INCOMPLETE;
 
           count += 1;
-          return count > DIMENSION;
+          return count > RESOLUTION;
         });
 
-      return count > DIMENSION;
+      return count > RESOLUTION;
     });
 
   const healthyServices = healthy(currencies) && healthy(metals) && healthy(cryptos);
@@ -91,7 +109,7 @@ export default (req, res) => {
     page: render('status', {
       version: PKG.version,
       now,
-      DIMENSION,
+      RESOLUTION,
       color: healthyServices ? 'green' : 'yellow',
       state: healthyServices ? 'All services are online' : 'There is some partial degradation',
       cache: renderCache(cache.status.keys),
@@ -101,7 +119,7 @@ export default (req, res) => {
       metalsUptime: uptime(metals),
       cryptos: renderService(cryptos),
       cryptosUptime: uptime(cryptos),
-      errors: JSON.stringify(errors.read()),
+      errors: renderErrors(),
     }),
     role: 'status',
   }));

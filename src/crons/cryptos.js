@@ -18,7 +18,7 @@ export default async () => {
     if (response) {
       const json = await response.json();
 
-      if (Object.keys(json).length > 0) {
+      if (Object.keys(json).length > 0 && json.Response !== 'Error') {
         const cryptos = {};
         Object.keys(json).forEach((symbol) => {
           cryptos[symbol] = json[symbol][BASE_CURRENCY];
@@ -39,6 +39,6 @@ export default async () => {
     }
   } catch (error) {
     console.log('[🤖:cryptos] error:', error);
-    errors.write({ ...errors.read(), [now]: error });
+    errors.write({ ...errors.read(), [now.toISOString()]: error.message });
   }
 };

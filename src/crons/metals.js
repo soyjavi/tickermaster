@@ -43,6 +43,6 @@ export default async () => {
     }
   } catch (error) {
     console.log('[🤖:metals] error:', error);
-    errors.write({ ...errors.read(), [now]: error });
+    errors.write({ ...errors.read(), [now.toISOString()]: error.message });
   }
 };
