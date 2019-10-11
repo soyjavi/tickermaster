@@ -1,4 +1,5 @@
-import { time, Store } from '../../common';
+import Store from './store';
+import time from './time';
 
 export default (previousMonths = 1) => {
   const { date } = time();

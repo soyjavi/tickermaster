@@ -1,9 +1,7 @@
 import {
-  C, cache, ERROR, parseCurrency, time,
+  C, cache, ERROR, getHistory, parseCurrency, time,
 } from '../common';
-import {
-  calcExchange, getHistory, getWeek, median,
-} from './modules';
+import { calcExchange, getWeek, median } from './modules';
 
 const { SYMBOLS } = C;
 const HOURLY = 'H';
