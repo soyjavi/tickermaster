@@ -1,14 +1,22 @@
 import { CronJob } from 'cron';
 
-import metals from './metals';
+import currencies from './currencies';
+// import metals from './metals';
 import cryptos from './cryptos';
+
+const restore = async () => {
+  await currencies(false);
+  await cryptos(false);
+};
 
 const DEFAULTS = { runOnInit: false, start: true, timeZone: 'Europe/London' };
 const crons = {};
 
 const start = () => {
-  crons.metals = new CronJob({ cronTime: '0 * * * *', onTick: metals, ...DEFAULTS });
-  crons.cryptos = new CronJob({ cronTime: '1,31 * * * *', onTick: cryptos, ...DEFAULTS });
+  crons.currencies = new CronJob({ cronTime: '0,15,30,45 * * * *', onTick: currencies, ...DEFAULTS });
+  crons.cryptos = new CronJob({ cronTime: '1,16,31,46 * * * *', onTick: cryptos, ...DEFAULTS });
+  // crons.metals = new CronJob({ cronTime: '0,15,35,45 * * * *', onTick: metals, ...DEFAULTS });
+  crons.restore = new CronJob({ cronTime: '0 0 1 * *', onTick: restore, ...DEFAULTS });
 
   return crons;
 };
