@@ -4,7 +4,13 @@ import PKG from '../../package.json';
 import Store from './store';
 
 dotenv.config();
-const { BASE_CURRENCY, CACHE } = process.env || {};
+const {
+  BASE_CURRENCY,
+  CACHE,
+  URL_CURRENCIES,
+  URL_METALS,
+  URL_CRYPTOS,
+} = process.env || {};
 const { name, description, version } = PKG;
 const store = new Store({ filename: 'symbols' });
 const SYMBOLS = Object.keys(store.read());
@@ -19,17 +25,23 @@ const CURRENCIES = SYMBOLS.filter((symbol) => !NO_CURRENCIES.includes(symbol));
 
 export default {
   BASE_CURRENCY,
+
   CACHE,
   CURRENCIES,
   CRYPTOS,
+
   METALS,
+
   NO_CURRENCIES,
 
   PKG: { name, description, version },
+
   SYMBOLS,
+
   URL: {
-    CRYPTOCOMPARE: 'https://min-api.cryptocompare.com/data',
-    METALS: 'https://metals-api.com/api',
+    CRYPTOS: URL_CRYPTOS,
+    CURRENCIES: URL_CURRENCIES,
+    METALS: URL_METALS,
     SERVICE: 'https://tickermaster.glitch.me',
   },
 };

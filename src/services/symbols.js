@@ -23,7 +23,7 @@ export default async (req, res) => {
   }
 
   // 3. Fetch & Merge crypto symbols
-  response = await fetch(`${URL.CRYPTOCOMPARE}/all/coinlist`);
+  response = await fetch(`${URL.CRYPTOS}/all/coinlist`);
   if (response) {
     const { Data: cryptos = {} } = await response.json();
     Object.keys(cryptos)
