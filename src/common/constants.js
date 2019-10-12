@@ -18,9 +18,8 @@ const SYMBOLS = Object.keys(store.read());
 let { CRYPTOS, METALS } = process.env || {};
 CRYPTOS = CRYPTOS.split(',');
 METALS = METALS.split(',');
-const EXCLUDED_METALS = ['XPD', 'XPT'];
 
-const NO_CURRENCIES = [BASE_CURRENCY, ...CRYPTOS, ...METALS, ...EXCLUDED_METALS];
+const NO_CURRENCIES = [BASE_CURRENCY, ...CRYPTOS, ...METALS];
 const CURRENCIES = SYMBOLS.filter((symbol) => !NO_CURRENCIES.includes(symbol));
 
 export default {

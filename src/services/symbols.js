@@ -2,7 +2,6 @@ import fetch from 'node-fetch';
 import { C, cache, Store } from '../common';
 
 const { CRYPTOS, URL } = C;
-const { METALS_API_KEY } = process.env || {};
 const CACHE_1_DAY = 60 * 60 * 24;
 const availableCryptos = CRYPTOS;
 
@@ -13,17 +12,8 @@ export default async (req, res) => {
   let symbols = store.read() || {};
   res.json(symbols);
 
-  // 2. Fetch & Merge metal symbols
-  const keys = METALS_API_KEY.split(',');
-  const api = keys[Math.floor(Math.random() * keys.length)];
-  let response = await fetch(`${URL.METALS}/symbols?access_key=${api}`);
-  if (response) {
-    const metals = await response.json() || {};
-    symbols = { ...symbols, ...metals };
-  }
-
-  // 3. Fetch & Merge crypto symbols
-  response = await fetch(`${URL.CRYPTOS}/all/coinlist`);
+  // 1. Fetch & Merge crypto symbols
+  const response = await fetch(`${URL.CRYPTOS}/all/coinlist`);
   if (response) {
     const { Data: cryptos = {} } = await response.json();
     Object.keys(cryptos)
@@ -34,6 +24,7 @@ export default async (req, res) => {
       });
   }
 
+  // 2. Cache
   store.write(symbols);
   cache.set(originalUrl, symbols, CACHE_1_DAY);
 };

@@ -3,13 +3,17 @@ import { Store, time } from '../../common';
 export default (symbols = {}) => {
   const { date, hour } = time();
   const store = new Store({ filename: 'latest' });
-  const rows = store.read();
+  let rows = store.read();
 
-  store.write({
+  rows = {
     ...rows,
     [date]: {
       ...rows[date],
       [hour]: { ...(rows[date] ? rows[date][hour] : {}), ...symbols },
     },
-  });
+  };
+
+  // @TODO: Keep only last 7 days
+
+  store.write(rows);
 };

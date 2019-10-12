@@ -12,12 +12,12 @@ export default (req, res) => {
   if (!SYMBOLS.includes(baseCurrency)) return ERROR.NOT_FOUND(res);
 
   // 2. Get values
-  const store = new Store({ filename: date.substr(0, 7) });
+  const store = new Store({ filename: 'latest' });
   let rates = store.read();
   const hour = Object.keys(rates[date])
     .sort()
     .reverse()
-    .find((item) => Object.keys(rates[date][item]).length > 168);
+    .find((item) => Object.keys(rates[date][item]).length > (SYMBOLS.length - 10));
 
   rates = rates[date][hour];
 

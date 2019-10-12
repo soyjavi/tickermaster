@@ -4,19 +4,19 @@ import currencies from './currencies';
 // import metals from './metals';
 import cryptos from './cryptos';
 
-const restore = async () => {
-  await currencies(false);
-  await cryptos(false);
+const worker = async (props) => {
+  await currencies(props);
+  // await metals(props);
+  await cryptos(props);
 };
 
 const DEFAULTS = { runOnInit: false, start: true, timeZone: 'Europe/London' };
 const crons = {};
 
 const start = () => {
-  crons.currencies = new CronJob({ cronTime: '0,15,30,45 * * * *', onTick: currencies, ...DEFAULTS });
-  crons.cryptos = new CronJob({ cronTime: '1,16,31,46 * * * *', onTick: cryptos, ...DEFAULTS });
-  // crons.metals = new CronJob({ cronTime: '0,15,35,45 * * * *', onTick: metals, ...DEFAULTS });
-  crons.restore = new CronJob({ cronTime: '0 0 1 * *', onTick: restore, ...DEFAULTS });
+  crons.latest = new CronJob({ cronTime: '5,20,35,50 * * * *', onTick: () => worker({ latest: true }), ...DEFAULTS });
+  crons.daily = new CronJob({ cronTime: '0 0 * * *', onTick: () => worker({ daily: true }), ...DEFAULTS });
+  crons.restore = new CronJob({ cronTime: '30 0 1 * *', onTick: () => worker(), ...DEFAULTS });
 
   return crons;
 };

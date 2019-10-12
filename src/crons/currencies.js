@@ -8,12 +8,12 @@ import { storeLatest } from './modules';
 const { BASE_CURRENCY, URL } = C;
 const HEADER = '[🤖:currencies]';
 
-export default async (latest = true) => {
+export default async ({ latest, daily } = {}) => {
   cache.wipe();
   const {
     date, year, month, day,
   } = time();
-  const startAt = latest
+  const startAt = (latest || daily)
     ? (new Date(year, month, day - 1)).toISOString().substring(0, 10)
     : '2000-01-01';
 
