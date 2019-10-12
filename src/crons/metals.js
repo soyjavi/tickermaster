@@ -26,7 +26,7 @@ export default async () => {
 
       if (Object.keys(metals).length > 0) {
         Object.keys(metals).forEach((symbol) => {
-          metals[symbol] = parseFloat(metals[symbol].toFixed(4));
+          metals[symbol] = parseFloat(metals[symbol].toFixed(8));
         });
         const store = new Store({ filename: date.substr(0, 7) });
         const rates = store.read();
