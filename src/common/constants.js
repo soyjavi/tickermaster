@@ -37,6 +37,14 @@ export default {
 
   SYMBOLS,
 
+  TIMELINE: {
+    HOURLY: 'H',
+    DAILY: 'D',
+    WEEKLY: 'W',
+    MONTHLY: 'M',
+    // YEARLY: 'Y',
+  },
+
   URL: {
     CRYPTOS: URL_CRYPTOS,
     CURRENCIES: URL_CURRENCIES,
