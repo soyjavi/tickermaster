@@ -10,7 +10,9 @@ const RESOLUTION = 72;
 const {
   CURRENCIES, CRYPTOS, METALS, URL: { SERVICE },
 } = C;
-const STATE = { ERROR: 1, INCOMPLETE: 2, COMPLETE: 3 };
+const ERROR = 1;
+const INCOMPLETE = 2;
+const COMPLETE = 3;
 
 const skeleton = () => {
   const {
@@ -19,19 +21,27 @@ const skeleton = () => {
 
   const dataSource = {};
   Array.from({ length: RESOLUTION }, (value, index) => {
-    dataSource[(new Date(year, month, day, parseInt(hour, 10) - (index))).toISOString()] = STATE.ERROR;
+    dataSource[(new Date(year, month, day, parseInt(hour, 10) - (index))).toISOString()] = ERROR;
   });
 
   return dataSource;
 };
 
-const intersect = (base, dataSource) => base.every((item) => dataSource.includes(item));
+const state = (base, dataSource) => {
+  const { length } = base.filter((key) => dataSource.includes(key));
+  let value = ERROR;
+
+  if (length === base.length) value = COMPLETE;
+  else if (length !== 0) value = INCOMPLETE;
+
+  return value;
+};
 
 const renderService = (dataSource) => arrayToHtml(
   Object.keys(dataSource).map((timestamp) => {
     let color = 'red';
-    if (dataSource[timestamp] === STATE.COMPLETE) color = 'green';
-    else if (dataSource[timestamp] === STATE.INCOMPLETE) color = 'yellow';
+    if (dataSource[timestamp] === COMPLETE) color = 'green';
+    else if (dataSource[timestamp] === INCOMPLETE) color = 'yellow';
 
     return render('templates/item-service-hour', { timestamp, color });
   }),
@@ -64,12 +74,12 @@ const renderErrors = () => {
 
 const uptime = (dataSource) => {
   const keys = Object.keys(dataSource);
-  const { length } = keys.filter((key) => dataSource[key] === STATE.COMPLETE);
+  const { length } = keys.filter((key) => dataSource[key] === COMPLETE);
 
   return ((length * 100) / RESOLUTION).toFixed(2);
 };
 
-const healthy = (values = {}) => !Object.keys(values).some((key) => values[key] === STATE.INCOMPLETE);
+const healthy = (values = {}) => !Object.keys(values).some((key) => values[key] === INCOMPLETE);
 
 export default (req, res) => {
   const { now } = time();
@@ -94,9 +104,9 @@ export default (req, res) => {
           const index = (new Date(year, month - 1, day, hour)).toISOString();
           const symbols = Object.keys(latest[date][hour]);
 
-          if (currencies[index]) currencies[index] = intersect(CURRENCIES, symbols) ? STATE.COMPLETE : STATE.INCOMPLETE;
-          if (metals[index]) metals[index] = intersect(METALS, symbols) ? STATE.COMPLETE : STATE.INCOMPLETE;
-          if (cryptos[index]) cryptos[index] = intersect(CRYPTOS, symbols) ? STATE.COMPLETE : STATE.INCOMPLETE;
+          if (currencies[index]) currencies[index] = state(CURRENCIES, symbols);
+          if (metals[index]) metals[index] = state(METALS, symbols);
+          if (cryptos[index]) cryptos[index] = state(CRYPTOS, symbols);
 
           count += 1;
           return count > RESOLUTION;
