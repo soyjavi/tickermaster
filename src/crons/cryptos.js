@@ -8,10 +8,10 @@ import { storeLatest } from './modules';
 const { BASE_CURRENCY, CRYPTOS, URL } = C;
 const HEADER = '[🤖:cryptos]';
 
-const fetchService = async ({ latest, daily, symbol }) => {
+const fetchService = async ({ latest, symbol }) => {
   const url = latest
     ? `${URL.CRYPTOS}/pricemulti?tsyms=${BASE_CURRENCY}&fsyms=${CRYPTOS.join(',')}`
-    : `${URL.CRYPTOS}/v2/histoday?fsym=${symbol}&tsym=${BASE_CURRENCY}&limit=${daily ? 1 : 2000}`;
+    : `${URL.CRYPTOS}/v2/histoday?fsym=${symbol}&tsym=${BASE_CURRENCY}&limit=2000`;
   console.log(`🔎 ${HEADER} fetching ${url}`);
 
   const response = await fetch(url);
@@ -23,12 +23,12 @@ const fetchService = async ({ latest, daily, symbol }) => {
   return json;
 };
 
-export default async ({ latest, daily } = {}) => {
+export default async ({ latest } = {}) => {
   cache.wipe();
 
   try {
     if (latest) {
-      const rates = await fetchService({ latest, daily });
+      const rates = await fetchService({ latest });
       if (Object.keys(rates).length === 0) throw Error('Rates not found.');
 
       const values = {};
@@ -38,7 +38,7 @@ export default async ({ latest, daily } = {}) => {
       console.log(`✔️  ${HEADER} found ${Object.keys(rates).length} new rates.`);
     } else {
       CRYPTOS.reduce((prev, symbol) => prev.then(async () => {
-        const { Data: { Data: rates = [] } = {} } = await fetchService({ daily, symbol });
+        const { Data: { Data: rates = [] } = {} } = await fetchService({ symbol });
         if (rates.length === 0) throw Error(`Rates not found for ${symbol}.`);
 
         rates.forEach(({ time: timestamp, close }) => {

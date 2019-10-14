@@ -8,12 +8,12 @@ import { storeLatest } from './modules';
 const { BASE_CURRENCY, URL } = C;
 const HEADER = '[🤖:currencies]';
 
-export default async ({ latest, daily } = {}) => {
+export default async ({ latest } = {}) => {
   cache.wipe();
   const {
     date, year, month, day,
   } = time();
-  const startAt = (latest || daily)
+  const startAt = latest
     ? (new Date(year, month, day - 1)).toISOString().substring(0, 10)
     : '2000-01-01';
 
@@ -25,8 +25,7 @@ export default async ({ latest, daily } = {}) => {
 
     const response = await fetch(url);
     if (!response) throw Error('Can not fetch data.');
-
-    if (response) {
+    else {
       const { rates = {} } = await response.json();
       if (Object.keys(rates).length === 0) throw Error('Rates not found.');
 
