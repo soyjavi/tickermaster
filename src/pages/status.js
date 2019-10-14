@@ -1,7 +1,7 @@
 import PKG from '../../package.json';
 
 import {
-  C, cache, getHistory, render, Store, time,
+  C, cache, render, Store, time,
 } from '../common';
 
 import arrayToHtml from './modules/arrayToHtml';
@@ -77,20 +77,22 @@ export default (req, res) => {
   const metals = skeleton();
   const cryptos = skeleton();
 
-  const history = getHistory();
+  const store = new Store({ filename: 'latest' });
+  const latest = store.read();
+
   let count = 0;
-  Object.keys(history)
+  Object.keys(latest)
     .sort()
     .reverse()
     .some((date) => {
       const [year, month, day] = date.split('-');
 
-      Object.keys(history[date])
+      Object.keys(latest[date])
         .sort()
         .reverse()
         .some((hour) => {
           const index = (new Date(year, month - 1, day, hour)).toISOString();
-          const symbols = Object.keys(history[date][hour]);
+          const symbols = Object.keys(latest[date][hour]);
 
           if (currencies[index]) currencies[index] = intersect(CURRENCIES, symbols) ? STATE.COMPLETE : STATE.INCOMPLETE;
           if (metals[index]) metals[index] = intersect(METALS, symbols) ? STATE.COMPLETE : STATE.INCOMPLETE;

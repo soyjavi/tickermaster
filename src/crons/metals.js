@@ -2,16 +2,17 @@ import dotenv from 'dotenv';
 import fetch from 'node-fetch';
 
 import {
-  C, cache, Store, time,
+  C, cache, ERROR, time,
 } from '../common';
+import { storeLatest } from './modules';
 
 dotenv.config();
 const { METALS_API_KEY } = process.env || {};
-const { URL } = C;
+const { METALS, URL } = C;
+const HEADER = '[🤖:metals]';
 
 export default async () => {
-  const { now, date, hour } = time();
-  const errors = new Store({ filename: 'errors' });
+  const { date, hour } = time();
 
   console.log(`[🤖:metals] ${date}-${hour} searching new rates ...`);
   cache.wipe();
@@ -19,30 +20,18 @@ export default async () => {
   try {
     const keys = METALS_API_KEY.split(',');
     const api = keys[Math.floor(Math.random() * keys.length)];
-    const response = await fetch(`${URL.METALS}/latest?access_key=${api}`);
 
-    if (response) {
-      const { rates: metals = [] } = await response.json();
+    const url = `${URL.METALS}/latest?access_key=${api}&symbols=${METALS.join(',')}`;
+    console.log(`🔎 ${HEADER} fetching ${url}`);
 
-      if (Object.keys(metals).length > 0) {
-        Object.keys(metals).forEach((symbol) => {
-          metals[symbol] = parseFloat(metals[symbol].toFixed(8));
-        });
-        const store = new Store({ filename: date.substr(0, 7) });
-        const rates = store.read();
+    const response = await fetch(url);
+    if (!response) throw Error('Can not fetch data.');
+    else {
+      const { rates: metals = {} } = await response.json();
 
-        rates[date] = rates[date] ? rates[date] : {};
-        rates[date][hour] = rates[date][hour] ? rates[date][hour] : {};
-        rates[date][hour] = { ...rates[date][hour], ...metals };
-        store.write(rates);
-
-        console.log(`[🤖:metals] ${date}-${hour} found ${Object.keys(metals).length} new rates...`);
-      } else {
-        throw Error('[🤖:metals] can not get rates');
-      }
+      if (!Object.keys(metals).length > 0) throw Error('Rates not found.');
+      storeLatest(metals);
+      console.log(`${HEADER} found ${Object.keys(metals).length} new rates...`);
     }
-  } catch (error) {
-    console.log('[🤖:metals] error:', error);
-    errors.write({ ...errors.read(), [now.toISOString()]: error.message });
-  }
+  } catch ({ message }) { ERROR.store(`${HEADER} ${message}`); }
 };
