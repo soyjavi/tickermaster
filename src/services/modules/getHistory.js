@@ -9,8 +9,8 @@ export default (group) => {
   let store = new Store({ filename: group === HOURLY ? 'latest' : year });
   let rows = store.read();
 
-  if (!HOURLY) {
-    const repeat = (group === DAILY || group === WEEKLY) ? 1 : 3;
+  if (group !== HOURLY) {
+    const repeat = (group === DAILY || group === WEEKLY) ? 2 : 10;
 
     for (let i = 0; i < repeat; i += 1) {
       store = new Store({ filename: year - i });

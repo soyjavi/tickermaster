@@ -1,14 +1,19 @@
 import {
-  C, cache, ERROR, getHistory, parseCurrency, time,
+  C, cache, ERROR, parseCurrency, time,
 } from '../common';
-import { calcExchange, getWeek, median } from './modules';
+import {
+  calcExchange, getHistory, getWeek, median,
+} from './modules';
 
-const { SYMBOLS } = C;
-const HOURLY = 'H';
-const DAILY = 'D';
-const WEEKLY = 'W';
-const GROUPS = [HOURLY, DAILY, WEEKLY];
+const {
+  CRYPTOS, METALS, SYMBOLS, TIMELINE,
+} = C;
 const CURRENT_WEEK = getWeek(new Date());
+const GROUPS = Object.values(TIMELINE);
+const SYMBOLS_LENGTH = SYMBOLS.length - METALS.length;
+const {
+  HOURLY, DAILY, WEEKLY, MONTHLY, YEARLY,
+} = TIMELINE;
 
 export default (req, res) => {
   const { originalUrl, params: { baseCurrency, symbol, group } } = req;
@@ -21,75 +26,77 @@ export default (req, res) => {
 
   // 3. Determine files to check
   const { now } = time();
-  const history = getHistory(group === WEEKLY ? 12 : 1);
+  const history = getHistory(group);
   let rates = {};
 
   // 4. Process history
-  let fulfilled = false;
-  Object.keys(history)
-    .sort()
-    .reverse()
-    .some((date) => {
-      const [year, month, day] = date.split('-');
+  const dates = Object.keys(history).sort().reverse();
 
-      if (group === HOURLY) {
-        Object.keys(history[date])
-          .sort()
-          .reverse()
-          .some((hour) => {
-            const value = calcExchange(history[date][hour], symbol, baseCurrency);
-            rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
-            fulfilled = Object.keys(rates).length >= 32;
-            return fulfilled;
-          });
-      } else if (group === DAILY || group === WEEKLY) {
-        let key;
-        let value;
+  dates.some((date) => {
+    const [year, month, day] = date.split('-');
 
-        if (group === DAILY && Object.keys(rates).length === 0) {
-          const { hour } = time();
-          value = calcExchange(history[date][hour], symbol, baseCurrency);
-          key = (new Date(year, month - 1, day, hour)).toISOString();
-        } else {
-          value = median(
-            Object
-              .keys(history[date])
-              .map((hour) => calcExchange(history[date][hour], symbol, baseCurrency)),
-          );
-          key = (new Date(year, month - 1, day)).toISOString();
-        }
-        rates[key] = parseCurrency(value);
+    if (group === HOURLY) {
+      Object.keys(history[date])
+        .sort()
+        .reverse()
+        .some((hour) => {
+          const value = calcExchange(history[date][hour], symbol, baseCurrency);
+          rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
 
-        const { length } = Object.keys(rates);
-        fulfilled = group === DAILY ? length >= 32 : length >= 365;
+          return Object.keys(rates).length >= 32;
+        });
+    } else {
+      const rate = history[date];
+
+      if (Object.keys(history[date]).length < SYMBOLS_LENGTH) {
+        const lastDate = dates.find((key) => Object.keys(history[key]).length === SYMBOLS_LENGTH);
+        SYMBOLS
+          .filter((key) => !CRYPTOS.includes(key))
+          .forEach((key) => { rate[key] = history[lastDate][key]; });
       }
 
-      return fulfilled;
-    });
+      rates[date] = calcExchange(rate, symbol, baseCurrency);
+    }
 
-  // 5. Fullfill empty values with previous value
-  let previousValue = 0;
-  Object.keys(rates).forEach((value) => {
-    rates[value] = rates[value] || previousValue;
-    previousValue = rates[value];
+    const { length } = Object.keys(rates);
+    return (
+      ((group === HOURLY || group === DAILY) && length > 32)
+      || (group === WEEKLY && length > 224)
+      || (group === MONTHLY && length > 976)
+      || (group === YEARLY && length > 11692)
+    );
   });
 
-  // 6. For WEEKLY group
-  if (group === WEEKLY) {
-    const { year, month, day } = time();
-    const weeks = [];
+  // 5. WEEKLY || MONTHLY || YEARLY group
+  if ([WEEKLY, MONTHLY, YEARLY].includes(group)) {
+    const values = {};
     Object.keys(rates).forEach((date) => {
-      const weekIndex = CURRENT_WEEK - getWeek(date);
-      weeks[weekIndex] = [...(weeks[weekIndex] || []), rates[date]];
+      let key;
+      if (group === WEEKLY) key = CURRENT_WEEK - getWeek(date);
+      else if (group === MONTHLY) key = date.substring(0, 7);
+      else if (group === YEARLY) key = date.substring(0, 4);
+
+      if (rates[date]) values[key] = [...(values[key] || []), rates[date]];
     });
 
     rates = {};
-    weeks.forEach((week, index) => {
-      rates[(new Date(year, month, day - (7 * index))).toISOString()] = median(week);
+    const { year, month = 11, day } = time();
+    let keys = Object.keys(values);
+    if (group !== WEEKLY) keys = keys.sort().reverse();
+    keys.forEach((key, index) => {
+      let date;
+      if (group === WEEKLY) date = new Date(year, month, day - (7 * index));
+      else {
+        const [keyYear, keyMonth = 11] = key.split('-');
+        date = new Date(keyYear, keyMonth);
+      }
+
+      const medianValue = median(group === YEARLY ? values[key].slice(0, 30) : values[key]);
+      if (medianValue) rates[date.toISOString()] = parseCurrency(medianValue);
     });
   }
 
-  // 7. determine low, high & progression
+  // 6. determine low, high & progression
   const values = Object.values(rates);
   const low = Math.min(...values);
   const high = Math.max(...values);

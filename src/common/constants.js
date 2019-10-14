@@ -42,7 +42,7 @@ export default {
     DAILY: 'D',
     WEEKLY: 'W',
     MONTHLY: 'M',
-    // YEARLY: 'Y',
+    YEARLY: 'Y',
   },
 
   URL: {
