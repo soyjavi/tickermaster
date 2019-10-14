@@ -16,6 +16,15 @@
       <div class="content">
         <div class="item">
           <div class="row space-between">
+            <span>cryptos</span>
+            <small class="color-lighten">{{cryptosUptime}}% uptime for the last {{RESOLUTION}} hours</small>
+          </div>
+          <div class="row space-between reverse">
+            {{cryptos}}
+          </div>
+        </div>
+        <div class="item">
+          <div class="row space-between">
             <span>currencies</span>
             <small class="color-lighten">{{currenciesUptime}}% uptime for the last {{RESOLUTION}} hours</small>
           </div>
@@ -32,16 +41,6 @@
             {{metals}}
           </div>
         </div>
-        <div class="item">
-          <div class="row space-between">
-            <span>cryptos</span>
-            <small class="color-lighten">{{cryptosUptime}}% uptime for the last {{RESOLUTION}} hours</small>
-          </div>
-          <div class="row space-between reverse">
-            {{cryptos}}
-          </div>
-        </div>
-
       </div>
       <div class="legend row">
         <div class="square bg-color-green"></div>
@@ -50,6 +49,40 @@
         <small class="color-lighten">partial degradation</small>
         <div class="square bg-color-red"></div>
         <small class="color-lighten">downtime</small>
+      </div>
+    </section>
+
+
+    <section class="box">
+      <h3>Historical data</h3>
+      <div class="content">
+        <div class="item">
+          <div class="row space-between">
+            <span>cryptos</span>
+            <small class="color-lighten">{{historyCryptosUptime}}% uptime for the last {{RESOLUTION}} days</small>
+          </div>
+          <div class="row space-between reverse">
+            {{historyCryptos}}
+          </div>
+        </div>
+        <div class="item">
+          <div class="row space-between">
+            <span>currencies</span>
+            <small class="color-lighten">{{historyCurrenciesUptime}}% uptime for the last {{RESOLUTION}} days</small>
+          </div>
+          <div class="row space-between reverse">
+            {{historyCurrencies}}
+          </div>
+        </div>
+        <div class="item">
+          <div class="row space-between">
+            <span>metals</span>
+            <small class="color-lighten">{{historyMetalsUptime}}% uptime for the last {{RESOLUTION}} days</small>
+          </div>
+          <div class="row space-between reverse">
+            {{historyMetals}}
+          </div>
+        </div>
       </div>
     </section>
 
