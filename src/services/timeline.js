@@ -48,7 +48,7 @@ export default (req, res) => {
     } else {
       const rate = history[date];
 
-      if (Object.keys(history[date]).length < SYMBOLS_LENGTH) {
+      if (Object.keys(history[date]).length >= SYMBOLS_LENGTH) {
         const lastDate = dates.find((key) => Object.keys(history[key]).length === SYMBOLS_LENGTH);
         SYMBOLS
           .filter((key) => !CRYPTOS.includes(key))
