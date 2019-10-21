@@ -2,7 +2,10 @@ import {
   C, cache, ERROR, parseCurrency, time, Store,
 } from '../common';
 
-const { BASE_CURRENCY, SYMBOLS } = C;
+const {
+  BASE_CURRENCY, CRYPTOS, METALS, SYMBOLS,
+} = C;
+const ASSETS = [...CRYPTOS, ...METALS];
 
 export default (req, res) => {
   const { originalUrl, params: { baseCurrency } } = req;
@@ -26,7 +29,9 @@ export default (req, res) => {
     const conversion = 1 / rates[baseCurrency];
 
     Object.keys(rates).forEach((symbol) => {
-      rates[symbol] = parseCurrency(rates[symbol] * conversion);
+      rates[symbol] = parseCurrency(ASSETS.includes(symbol)
+        ? rates[symbol] / conversion
+        : rates[symbol] * conversion);
     });
     rates[BASE_CURRENCY] = parseCurrency(conversion);
   }
