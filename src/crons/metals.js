@@ -8,8 +8,10 @@ import { storeLatest } from './modules';
 
 dotenv.config();
 const { METALS_API_KEY } = process.env || {};
-const { METALS, URL } = C;
+const { CURRENCIES, METALS, URL } = C;
 const HEADER = '[🤖:metals]';
+
+const SYMBOLS = [...CURRENCIES, ...METALS];
 
 export default async () => {
   const { date, hour } = time();
@@ -21,7 +23,7 @@ export default async () => {
     const keys = METALS_API_KEY.split(',');
     const api = keys[Math.floor(Math.random() * keys.length)];
 
-    const url = `${URL.METALS}/latest?access_key=${api}&symbols=${METALS.join(',')}`;
+    const url = `${URL.METALS}/latest?access_key=${api}&symbols=${SYMBOLS.join(',')}`;
     console.log(`🔎 ${HEADER} fetching ${url}`);
 
     const response = await fetch(url);
