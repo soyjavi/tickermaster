@@ -3,7 +3,7 @@ import {
 } from '../common';
 import { calcExchange } from './modules';
 
-const { SYMBOLS } = C;
+const { BASE_CURRENCY, SYMBOLS } = C;
 
 export default (req, res) => {
   const { originalUrl, params: { amount, baseCurrency, symbol } } = req;
@@ -14,16 +14,19 @@ export default (req, res) => {
 
   // 2. Get values
   const store = new Store({ filename: 'latest' });
-  const rates = store.read();
+  let rates = store.read();
   const hour = Object.keys(rates[date])
     .sort()
     .reverse()
-    .find((item) => Object.keys(rates[date][item]).length === SYMBOLS.length);
+    .find((item) => (
+      (symbol === BASE_CURRENCY || rates[date][item][symbol])
+      && (baseCurrency === BASE_CURRENCY || rates[date][item][baseCurrency])
+    ));
 
-  const latestRate = rates[date][hour];
+  rates = rates[date][hour];
 
   // 3. If base currency is not the default one convert it
-  const conversion = calcExchange(latestRate, symbol, baseCurrency);
+  const conversion = calcExchange(rates, symbol, baseCurrency);
 
   // 4. Calculate the value with the amount
   const value = conversion * amount;
