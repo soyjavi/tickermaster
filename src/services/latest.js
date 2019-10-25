@@ -8,11 +8,11 @@ const {
 const ASSETS = [...CRYPTOS, ...METALS];
 
 export default (req, res) => {
-  const { originalUrl, params: { baseCurrency } } = req;
+  const { originalUrl, params: { base } } = req;
   const { date } = time();
 
-  // 1. Control if it's a allowed baseCurrency (default USD)
-  if (!SYMBOLS.includes(baseCurrency)) return ERROR.NOT_FOUND(res);
+  // 1. Control if it's a allowed base (default USD)
+  if (!SYMBOLS.includes(base)) return ERROR.NOT_FOUND(res);
 
   // 2. Get values
   const store = new Store({ filename: 'latest' });
@@ -25,11 +25,11 @@ export default (req, res) => {
   rates = rates[date][hour];
 
   // 3. Convert if is not default base currency
-  if (baseCurrency !== BASE_CURRENCY) {
-    const conversion = 1 / rates[baseCurrency];
+  if (base !== BASE_CURRENCY) {
+    const conversion = 1 / rates[base];
 
     Object.keys(rates).forEach((symbol) => {
-      rates[symbol] = parseCurrency(ASSETS.includes(symbol)
+      rates[symbol] = parseCurrency(ASSETS.includes(symbol) && !ASSETS.includes(base)
         ? rates[symbol] / conversion
         : rates[symbol] * conversion);
     });
@@ -38,7 +38,7 @@ export default (req, res) => {
 
   // 4. cache & response
   const response = {
-    baseCurrency,
+    base,
     date,
     hour,
     rates,

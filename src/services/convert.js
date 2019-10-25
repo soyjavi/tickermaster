@@ -6,11 +6,11 @@ import { calcExchange } from './modules';
 const { BASE_CURRENCY, SYMBOLS } = C;
 
 export default (req, res) => {
-  const { originalUrl, params: { amount, baseCurrency, symbol } } = req;
+  const { originalUrl, params: { amount, base, symbol } } = req;
   const { date } = time();
 
-  // 1. Control if it's baseCurrency and symbol are allowed values
-  if (!SYMBOLS.includes(baseCurrency) || !SYMBOLS.includes(symbol)) return ERROR.NOT_FOUND(res);
+  // 1. Control if it's base and symbol are allowed values
+  if (!SYMBOLS.includes(base) || !SYMBOLS.includes(symbol)) return ERROR.NOT_FOUND(res);
 
   // 2. Get values
   const store = new Store({ filename: 'latest' });
@@ -20,20 +20,20 @@ export default (req, res) => {
     .reverse()
     .find((item) => (
       (symbol === BASE_CURRENCY || rates[date][item][symbol])
-      && (baseCurrency === BASE_CURRENCY || rates[date][item][baseCurrency])
+      && (base === BASE_CURRENCY || rates[date][item][base])
     ));
 
   rates = rates[date][hour];
 
   // 3. If base currency is not the default one convert it
-  const conversion = calcExchange(rates, symbol, baseCurrency);
+  const conversion = calcExchange(rates, symbol, base);
 
   // 4. Calculate the value with the amount
   const value = conversion * amount;
 
   // 5. cache & response
   const response = {
-    baseCurrency,
+    base,
     symbol,
     amount,
     date,

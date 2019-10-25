@@ -16,10 +16,10 @@ const {
 } = TIMELINE;
 
 export default (req, res) => {
-  const { originalUrl, params: { baseCurrency, symbol, group } } = req;
+  const { originalUrl, params: { base, symbol, group } } = req;
 
   // 1. Control :symbol is valid
-  if (!SYMBOLS.includes(baseCurrency) || !SYMBOLS.includes(symbol)) return ERROR.NOT_FOUND(res);
+  if (!SYMBOLS.includes(base) || !SYMBOLS.includes(symbol)) return ERROR.NOT_FOUND(res);
 
   // 2. Control :group is valid
   if (!GROUPS.includes(group)) return ERROR.UNKNOWN_SERVICE(res);
@@ -40,7 +40,7 @@ export default (req, res) => {
         .sort()
         .reverse()
         .some((hour) => {
-          const value = calcExchange(history[date][hour], symbol, baseCurrency);
+          const value = calcExchange(history[date][hour], symbol, base);
           rates[(new Date(year, month - 1, day, hour)).toISOString()] = value;
 
           return Object.keys(rates).length >= 32;
@@ -55,7 +55,7 @@ export default (req, res) => {
           .forEach((key) => { rate[key] = history[lastDate][key]; });
       }
 
-      rates[date] = calcExchange(rate, symbol, baseCurrency);
+      rates[date] = calcExchange(rate, symbol, base);
     }
 
     const { length } = Object.keys(rates);
@@ -104,7 +104,7 @@ export default (req, res) => {
 
   // 7. cache & response
   const response = {
-    baseCurrency,
+    base,
     symbol,
     group,
     now,

@@ -34,10 +34,10 @@ app.use('/static', express.static('assets'));
 app.use('/static', express.static('dist'));
 
 // -- Middlewares
-app.get('/:baseCurrency/:symbol/:group', cache, timeline);
-app.get('/:baseCurrency/latest', cache, latest);
+app.get('/:base/:symbol/:group', cache, timeline);
+app.get('/:base/latest', cache, latest);
 app.get('/chart/:base/:symbol/:group', chart);
-app.get('/convert/:baseCurrency/:amount/:symbol', cache, convert);
+app.get('/convert/:base/:amount/:symbol', cache, convert);
 app.get('/symbols', cache, symbols);
 app.get('/status', status);
 app.get('/backup/:key', backup);
