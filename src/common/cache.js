@@ -27,6 +27,8 @@ class Cache {
   set(key, value, seconds = CACHE) {
     this.store[key] = value;
     this.interval[key] = seconds;
+
+    return value;
   }
 
   wipe() {

@@ -18,6 +18,7 @@ const crons = {};
 const start = () => {
   crons.latest = new CronJob({ cronTime: '0,59 * * * *', onTick: () => worker({ latest: true }), ...DEFAULTS });
   crons.latestMetals = new CronJob({ cronTime: '0 * * * *', onTick: metals, ...DEFAULTS });
+
   crons.restore = new CronJob({ cronTime: '30 0 1 * *', onTick: worker, ...DEFAULTS });
 
   return crons;

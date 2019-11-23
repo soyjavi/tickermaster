@@ -15,12 +15,12 @@ const { name, description, version } = PKG;
 const store = new Store({ filename: 'symbols' });
 const SYMBOLS = Object.keys(store.read());
 
-let { CRYPTOS, METALS } = process.env || {};
+let { CURRENCIES, CRYPTOS, METALS } = process.env || {};
+CURRENCIES = CURRENCIES.split(',');
 CRYPTOS = CRYPTOS.split(',');
 METALS = METALS.split(',');
 
 const NO_CURRENCIES = [BASE_CURRENCY, ...CRYPTOS, ...METALS];
-const CURRENCIES = SYMBOLS.filter((symbol) => !NO_CURRENCIES.includes(symbol));
 
 export default {
   BASE_CURRENCY,
